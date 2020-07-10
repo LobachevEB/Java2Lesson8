@@ -13,6 +13,7 @@ public class ClientHandler {
 
     private String nick;
     private String login;
+    private final int AUTH_TIMEOUT = 120000;
 
     public ClientHandler(Server server, Socket socket) {
         try {
@@ -23,7 +24,7 @@ public class ClientHandler {
 
             new Thread(() -> {
                 try {
-//                    socket.setSoTimeout(5000);
+                    socket.setSoTimeout(AUTH_TIMEOUT); //Таймер взвели
 
                     //цикл аутентификации
                     while (true) {
@@ -43,6 +44,7 @@ public class ClientHandler {
                                     sendMsg("/authok " + newNick);
                                     nick = newNick;
                                     server.subscribe(this);
+                                    socket.setSoTimeout(0); //Если всё норм, таймер остановили
                                     System.out.printf("Клиент %s подключился \n", nick);
                                     break;
                                 } else {
